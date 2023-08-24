@@ -30,5 +30,8 @@ RUN apt-get update && apt-get install -y jq
 RUN groupadd -g 995 docker
 RUN usermod -aG docker jenkins
 
+# Copy SSH private key
+COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
+
 # Switch back to Jenkins user
 USER jenkins
