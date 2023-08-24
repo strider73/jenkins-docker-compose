@@ -29,6 +29,9 @@ RUN apt-get update && apt-get install -y jq
 # Add Jenkins user to Docker group
 RUN groupadd -g 995 docker
 RUN usermod -aG docker jenkins
+#install nao
+RUN apt update
+RUN apt install nano
 
 # Copy SSH private key
 COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
