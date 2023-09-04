@@ -14,7 +14,7 @@ services:
     networks:
       - jenkins-network
   jenkins-agent:
-    image: jenkins-agent
+    image: striderlee/jenkins-agent
     privileged: true
     user: root
     container_name: jenkins-agent
