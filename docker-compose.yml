@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   jenkins-master:
-    image: jenkins/jenkins:lts
+    image: jenkins-master
     privileged: true
     user: root
     container_name: jenkins-master
@@ -11,6 +11,10 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JENKINS_OPTS="--httpPort=-1 --httpsPort=8443" # Configure HTTPS
+      - JENKINS_HTTPS_KEYSTORE=/var/jenkins_home/keystore.jks # Path to your keystore file
+      - JENKINS_HTTPS_KEYSTORE_PASSWORD=5785ch00 # Keystore password
     networks:
       - jenkins-network
   jenkins-agent:
