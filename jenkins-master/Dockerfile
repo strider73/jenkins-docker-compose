@@ -1,32 +1,10 @@
 FROM jenkins/jenkins:latest
+USER root  
 
-ARG BUILD_DATE="2023-09-01T00:28:07Z"
-ENV JENKINS_HOME /var/jenkins_home
-ENV CERT_FOLDER "$JENKINS_HOME/.ssl"
-ENV ROOT_CA ""
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
+COPY ["./.ssl/" ,"/var/jenkins_home/.ssl"]
+RUN chown -R jenkins:jenkins "/var/jenkins_home/.ssl"
 
-USER root
-# update
-RUN apt-get update && apt-get upgrade -y \
-	&& apt-get install -y curl openssl ca-certificates ca-certificates-java \
-	&& update-ca-certificates \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& rm -f /var/cache/apt/*.bin
-
-# SSL Setup
-ADD jenkins_cert.sh /usr/local/bin/jenkins_cert.sh
-RUN chmod +x /usr/local/bin/jenkins_cert.sh         # Add this line to make the script executable
-ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsCertificate="$CERT_FOLDER/jenkins.pem" --httpsPrivateKey="$CERT_FOLDER/jenkins.key"
-EXPOSE 8443
-
-# Set permissions for Jenkins home directory
-RUN chown -R jenkins:jenkins "$JENKINS_HOME"
+# ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
+ENV JENKINS_OPTS  --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
 
 USER jenkins
-#ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/jenkins_cert.sh"]
-# Specify your entry point command here
-CMD ["/usr/local/bin/jenkins_cert.sh"]
