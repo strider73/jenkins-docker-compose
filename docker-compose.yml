@@ -11,14 +11,14 @@ services:
     ports:
       - "8080:8080"
       - "50000:5000"
-      - "443:8443"
+      - "8443:8443"
     volumes:
-      - jenkins_home:/var/jenkins_home
+      - jenkins_https_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - jenkins-network
   jenkins-agent:
-    image: jenkins-agent
+    image: striderlee/jenkins-agent
     # build:
     #    context: ./
     #    dockerfile: Dockerfile
@@ -36,7 +36,7 @@ services:
       - JENKINS_AGENT_NAME=ssh-agent
       - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCPSEozggv6/FWeZqkDJ8UyWKiD7/6+LLMcYUkqpMiTQs2q74KC3L9mSnqw/G7jvfBhR6TZqxytgtqzVFPVEWMLLTWjNRNltOhCXNkDr+RLv0ihyPqhV3KDhuIIXZQsHEX15mBQjLnE8hfcWEJMD79SmAM0noJ7X5R91skcfm3sruPaHWNhOUoOnTVE5yRdnFha18GaLkUAB7XNFVk0L5J40ME9dngYcTApMp5UgYmvyLMKOKNS1rrMQJTSDjhHUW2YLTEzdjWMgXpcqQnlzCrqn/cUnolcgePQgV3CRSRcD5BV/bNUjhe9hH1K3010CdjdTzZ+ooysDOO/+nLSrLrgYV2s8JA/yPlU/s+mDA3mAZ14kP4I1GEaVDoXrm/Z7NMJ34MkPzNbaX4OUJXqIwYrphBqFQ27PoOpTKScNBk48HDBvNV1+zVuEmBBOz0OpJSzgkcjcxWh4rIdnTufxEHCPL/ys9H9nLhWg9dNp2h2wgLtS1Pi1n8OEYYt7X1ss1E= Jenkins agent key
 volumes:
-  jenkins_home:
+  jenkins_https_home:
 
 networks:
   jenkins-network:
