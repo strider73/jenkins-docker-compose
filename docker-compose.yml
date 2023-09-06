@@ -1,10 +1,10 @@
 version: '3.8'
 services:
   jenkins-master:
-    image: jenkins-master
-    # build:
-    #     context: ./
-    #     dockerfile: Dockerfile
+    #image: jenkins-master
+    build:
+        context: ./jenkins-master
+        dockerfile: Dockerfile
     privileged: true
     user: root
     container_name: jenkins-master
@@ -20,7 +20,7 @@ services:
   jenkins-agent:
     image: striderlee/jenkins-agent
     # build:
-    #    context: ./
+    #    context: ./jenkins-agent
     #    dockerfile: Dockerfile
     privileged: true
     user: root
