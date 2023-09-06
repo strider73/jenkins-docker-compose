@@ -10,7 +10,7 @@ services:
     container_name: jenkins-master
     ports:
       - "8080:8080"
-      - "50000:5000"
+      - "50000:50000"
       - "8443:8443"
     volumes:
       - jenkins_https_home:/var/jenkins_home
