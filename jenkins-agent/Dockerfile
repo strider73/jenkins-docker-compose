@@ -1,8 +1,7 @@
-
-#This is jenkins ssh agent  
-# 1. docker command available 
-# 2. and docker compose installed 
-# 3. github ssh credential is ready 
+# This is jenkins ssh agent
+# 1. Docker command available
+# 2. Docker Compose installed
+# 3. GitHub SSH credential is ready
 FROM jenkins/ssh-agent:jdk17
 
 # Install prerequisites
@@ -14,22 +13,21 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     lsb-release
 
-# Install Docker for ARM64
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-RUN echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update && apt-get install -y docker-ce-cli
+# Install Docker for x86_64 (64-bit)
+RUN curl -fsSL https://get.docker.com -o get-docker.sh
+RUN sh get-docker.sh
 
-RUN curl -fsSL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-Linux-aarch64 -o /usr/local/bin/docker-compose
+# Install Docker Compose
+RUN curl -fsSL https://github.com/docker/compose/releases/download/v2.20.3/docker-compose-Linux-x86_64 -o /usr/local/bin/docker-compose
 RUN chmod +x /usr/local/bin/docker-compose
-
 
 # Install jq
 RUN apt-get update && apt-get install -y jq
 
 # Add Jenkins user to Docker group
-RUN groupadd -g 995 docker
 RUN usermod -aG docker jenkins
-#install nao
+
+# Install nano (optional)
 RUN apt update
 RUN apt install nano
 

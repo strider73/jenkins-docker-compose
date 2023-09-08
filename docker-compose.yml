@@ -1,20 +1,26 @@
 version: '3.8'
 services:
   jenkins-master:
-    image: jenkins/jenkins:lts
+    #image: jenkins-master
+    build:
+        context: ./jenkins-master
+        dockerfile: Dockerfile
     privileged: true
     user: root
     container_name: jenkins-master
     ports:
-      - "8080:8080"
       - "50000:50000"
+      - "8443:8443"
     volumes:
-      - jenkins_home:/var/jenkins_home
+      - jenkins_https_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - jenkins-network
   jenkins-agent:
-    image: striderlee/jenkins-agent
+    # image: striderlee/jenkins-agent
+    build:
+       context: ./jenkins-agent
+       dockerfile: Dockerfile
     privileged: true
     user: root
     container_name: jenkins-agent
@@ -25,11 +31,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - JENKINS_URL=http://strider.freeddns.org:8080
+      - JENKINS_URL=https://strider.freeddns.org:8443
       - JENKINS_AGENT_NAME=ssh-agent
-      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCPSEozggv6/FWeZqkDJ8UyWKiD7/6+LLMcYUkqpMiTQs2q74KC3L9mSnqw/G7jvfBhR6TZqxytgtqzVFPVEWMLLTWjNRNltOhCXNkDr+RLv0ihyPqhV3KDhuIIXZQsHEX15mBQjLnE8hfcWEJMD79SmAM0noJ7X5R91skcfm3sruPaHWNhOUoOnTVE5yRdnFha18GaLkUAB7XNFVk0L5J40ME9dngYcTApMp5UgYmvyLMKOKNS1rrMQJTSDjhHUW2YLTEzdjWMgXpcqQnlzCrqn/cUnolcgePQgV3CRSRcD5BV/bNUjhe9hH1K3010CdjdTzZ+ooysDOO/+nLSrLrgYV2s8JA/yPlU/s+mDA3mAZ14kP4I1GEaVDoXrm/Z7NMJ34MkPzNbaX4OUJXqIwYrphBqFQ27PoOpTKScNBk48HDBvNV1+zVuEmBBOz0OpJSzgkcjcxWh4rIdnTufxEHCPL/ys9H9nLhWg9dNp2h2wgLtS1Pi1n8OEYYt7X1ss1E= Jenkins agent key
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCQ2jJz9hteqixbMdvxVnHLc6lsdLkAGAzZ4rIzW1+g9S/nGVrAnxnhTHJK+chgta1AviUop5n/YIactF3zLJI2uC84RV3GSMs1JLN2Bi1GEWpJ6ctYnVWgCJvlAIKBqeB66OyGmobfWU7CBbc1GsBAC21jAePYjSgUkR9CbcjK/RcWHjrK5SSbiChzYcH9t0i6cJccwE3SMzj5oRtJTetwC8Qfs2TlEOUHqI9rMI1NGUHGD8oJ9aDY+JTmGFpVAM0uiiWn3ohj7k4EzeTUgDtJlvgEVoe99GfITTXxkqeJrqsw70KBiJoPLrUqA2zysWNM8UiYiy74Omo7UXyQB1ULJkzYgQhbzT8cZmHkNMiPwXjxdfQqLlYsJxsrw09vwo8YsPQDDYHHZhoTmxn+x0OQuoZVxWr8WjkA2HeChV1cEWpObpEhHqs03WdfORXFN6eizwwyvWZYDwUa3mm9jv50zGedZN9PBKctrY6YPqmHcY6DOiOq6NvPocrWSt3jY20= strider@strider-pi
+
+
+
 volumes:
-  jenkins_home:
+  jenkins_https_home:
 
 networks:
   jenkins-network:
