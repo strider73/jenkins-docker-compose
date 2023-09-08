@@ -17,10 +17,10 @@ services:
     networks:
       - jenkins-network
   jenkins-agent:
-    image: striderlee/jenkins-agent
-    # build:
-    #    context: ./jenkins-agent
-    #    dockerfile: Dockerfile
+    # image: striderlee/jenkins-agent
+    build:
+       context: ./jenkins-agent
+       dockerfile: Dockerfile
     privileged: true
     user: root
     container_name: jenkins-agent
