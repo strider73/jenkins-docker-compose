@@ -30,6 +30,7 @@ services:
       - "2222:22"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins_agent_home:/home/jenkins
     environment:
       - JENKINS_URL=https://strider.freeddns.org:8443
       - JENKINS_AGENT_NAME=ssh-agent
@@ -41,6 +42,7 @@ services:
 
 volumes:
   jenkins_https_home:
+  jenkins_agent_home:
 
 networks:
   jenkins-network:
