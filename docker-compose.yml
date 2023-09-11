@@ -34,6 +34,7 @@ services:
       - JENKINS_URL=https://strider.freeddns.org:8443
       - JENKINS_AGENT_NAME=ssh-agent
       # just remember PRIVATE KEY will need extra carrage-return at the end of context once it uploaded to git hub .. Dont know why 
+      # So added carrage-return and did ulpoad to git again and seems like working now but need to check in every fresh installation process
       - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCQ2jJz9hteqixbMdvxVnHLc6lsdLkAGAzZ4rIzW1+g9S/nGVrAnxnhTHJK+chgta1AviUop5n/YIactF3zLJI2uC84RV3GSMs1JLN2Bi1GEWpJ6ctYnVWgCJvlAIKBqeB66OyGmobfWU7CBbc1GsBAC21jAePYjSgUkR9CbcjK/RcWHjrK5SSbiChzYcH9t0i6cJccwE3SMzj5oRtJTetwC8Qfs2TlEOUHqI9rMI1NGUHGD8oJ9aDY+JTmGFpVAM0uiiWn3ohj7k4EzeTUgDtJlvgEVoe99GfITTXxkqeJrqsw70KBiJoPLrUqA2zysWNM8UiYiy74Omo7UXyQB1ULJkzYgQhbzT8cZmHkNMiPwXjxdfQqLlYsJxsrw09vwo8YsPQDDYHHZhoTmxn+x0OQuoZVxWr8WjkA2HeChV1cEWpObpEhHqs03WdfORXFN6eizwwyvWZYDwUa3mm9jv50zGedZN9PBKctrY6YPqmHcY6DOiOq6NvPocrWSt3jY20= strider@strider-pi
                                  
 
