@@ -2,7 +2,7 @@
 # 1. Docker command available
 # 2. Docker Compose installed
 # 3. GitHub SSH credential is ready
-FROM jenkins/ssh-agent:jdk17
+FROM jenkins/ssh-agent:jdk11
 
 # Install prerequisites
 USER root
