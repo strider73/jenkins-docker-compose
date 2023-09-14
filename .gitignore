@@ -1,0 +1,10 @@
+data/database.sqlite
+data/keys.json
+data/logs/fallback_access.log
+data/logs/fallback_error.log
+data/logs/letsencrypt-requests_access.log
+data/logs/letsencrypt-requests_error.log
+data/logs/proxy-host-1_access.log
+data/logs/proxy-host-1_error.log
+data/nginx/proxy_host/1.conf
+letsencrypt/renewal/npm-1.conf
