@@ -18,7 +18,7 @@ Jenkins Docker Compose Setup Guide
         Make sure this key is available on both Jenkins Agent and Master.
         Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
 
-2) Jenkins Master SSL Setup
+2) Jenkins Master SSL Setup(Not neccessary when using a nginx proxy)
 
        Place the keystore.jks file inside the .ssh directory.
        To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:

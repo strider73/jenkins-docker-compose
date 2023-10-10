@@ -32,7 +32,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - jenkins_agent_home:/home/jenkins
     environment:
-      - JENKINS_URL=https://strider.freeddns.org:8443
+      - JENKINS_URL=http://192.168.1.100:8443
       - JENKINS_AGENT_NAME=ssh-agent
       # just remember PRIVATE KEY will need extra carrage-return at the end of context once it uploaded to git hub .. Dont know why 
       # So added carrage-return and did ulpoad to git again and seems like working now but need to check in every fresh installation process
