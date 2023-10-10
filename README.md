@@ -14,10 +14,19 @@ Jenkins Docker Compose Setup Guide
         During agent container creation, this public key will be added to the known_hosts file.
         Note: Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
 
-        ![How to add knownHost file to jenkins-master](images/ssh-keyscan.png)
+       
 
-        Step2) Node Setting 
+        Step2) New Node Setting 
         ![new node setting ](images/node-setting.png)
+        * root directory : /home/jenkins/agent
+        * Launch method : Launch agents via SSH
+        * Host : localhost or ipaddress
+        * HostkeyVerification Stratagy 
+             option 1) Nonn verifying verification Stratagy  => nothing to do but not secure!!!
+             option 2) Know host verification Stratagy => generate known_hosts file using ssh-keyscan
+                ![How to add knownHost file to jenkins-master](images/ssh-keyscan.png)
+                 change file permission to jenkins after create file
+             option 3) MAnually trusted key Verification Stratagy 
 
     * SSH Key for GitHub:
 
