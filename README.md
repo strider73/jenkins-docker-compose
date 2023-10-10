@@ -5,9 +5,10 @@ Jenkins Docker Compose Setup Guide
 1) SSH Keys
 
     * SSH Key for Communication Between Jenkins Master and Agent:
-      (reference : https://www.jenkins.io/doc/book/using/using-agents/)
-
-        Generate an SSH key pair; name the private key jenkins_agent_key.
+        
+        Step1)Generate an SSH key pair  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
+       
+        Name the private key jenkins_agent_key.
         Register the private key in Jenkins Master as a credential.
         Set the public key as an environment variable in your Docker Compose file.
         During agent container creation, this public key will be added to the known_hosts file.
@@ -15,6 +16,8 @@ Jenkins Docker Compose Setup Guide
 
         ![How to add knownHost file to jenkins-master](images/ssh-keyscan.png)
 
+        Step2) Node Setting 
+        ![new node setting ](images/node-setting.png)
 
     * SSH Key for GitHub:
 
