@@ -2,27 +2,37 @@
 
 Jenkins Docker Compose Setup Guide
 
-* How I setup my jenkins 
+* How I setup my jenkins / 4 main aspect to configure jenkins  
 
-    1 .SSL (HTTPS setup):
-      Since I’ve mapped port 8443 for HTTPS in your Docker Compose, Jenkins will need to be configured with SSL certificates.
-      I will either need to provide a self-signed certificate or obtain a certificate from a certificate authority
-      (in my case  I will set up nginx proxy server and create certificatioon ). 
-      After setting it up, make sure Jenkins is properly configured to point to these certificates.
+   1. SSL (HTTPS Setup):
+    Since I’ve mapped port 8443 for HTTPS in Docker Compose, Jenkins needs to be configured with SSL certificates.
+    I will either provide a self-signed certificate or obtain one from a certificate authority.
+    (In my case, I will set up an Nginx proxy server and create the certificates).
+    After setting it up, make sure Jenkins is properly configured to point to these certificates.
 
-    2.SSH:
-      SSH will be used for secure connections between Jenkins master and agents. You already have SSH keys (strider_jenkins_key), 
-      and you should ensure they are properly set up in the Jenkins configuration for SSH-based communication.
-      Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+   2. Master-Agent Mode:
+    If I want to run Jenkins for various testing conditions in a completely isolated environment and destroy the container after each Jenkins execution,
+    the master will only handle orchestration.
+    This guarantees job performance and clear separation.
     
-    3.Master-Agent Mode:
-      You’ve configured both the master and agent in Docker Compose. Since they’re running on the same network (jenkins-network), 
-      communication between the two should be seamless, using the container names instead of IP addresses.
-      You'll configure the master to communicate with the agent over SSH (which you've already prepared by setting environment variables like JENKINS_AGENT_SSH_PUBKEY).
-    
-    4.Using Docker Compose:
-      Docker Compose allows easy management and deployment of both the master and agent. Since you have separate Dockerfiles for each component (master and agent), the configuration in Docker Compose is ready to scale.
-      Compose will help in defining the volumes, networks, and dependencies needed for Jenkins to function across your setup, ensuring smooth operations and deployment.
+    Most importantly, it provides me with complete toolset configuration freedom—yes, you can do whatever you want without worrying about contaminating other environments.
+    I can't express enough how convenient this will be for future automation in CI/CD pipelines.
+
+   3. SSH Connection Between Master and Agent:
+     SSH will be used for secure connections between the Jenkins master and agents.
+     I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up in the Jenkins configuration for SSH-based communication.
+     Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections.
+     You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+
+     But wait a moment!
+     Theoretically, I don’t need to create an SSH channel between the master and agent since they already have good isolation through the Docker Compose network.
+     This unintentional secure environment is possible only because I’m currently running both the master and the agent on the same physical machine.
+     However, this structure will become an issue if I want to scale the agent container in the future.
+
+   4. Using Docker Compose:
+     Docker Compose allows easy management and deployment of both the master and agent.
+     Since I have separate Dockerfiles for each component (master and agent), the separation of the agent container from the controller on a physical level will be much easier!
+     Docker Compose will help in defining the volumes, networks, and dependencies needed for Jenkins to function across your setup, ensuring smooth operations and deployment.
 
 
 
