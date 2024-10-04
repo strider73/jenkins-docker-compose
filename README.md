@@ -55,7 +55,8 @@ There will be one more additional step to publish to AWS later on!
 
        
     1. SSL configuration  
-          In Jenkins, when configuring SSL, you typically need to handle two main components:
+          In Jenkins, when configuring SSL, you typically need to handle two main components.
+          
             1) SSL certrification Configuration : Two different way 
                   Using a nginx proxy server   as reverse Proxy
                   self-signed certificates to the java keystore : How to enable ssl in jenkins (without docker) https://www.baeldung.com/ops/jenkins-enable-https
