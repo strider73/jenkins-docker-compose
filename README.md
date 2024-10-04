@@ -16,14 +16,10 @@ There will be one more additional step to publish to AWS later on!
          (In my case, I will set up an Nginx proxy server and create the certificates.) 
          After setting it up, make sure Jenkins is properly configured to point to these certificates.
 
-     2. Master-Agent Mode: 
-        If I want to run Jenkins for various testing conditions in a completely isolated environment and destroy the container after each Jenkins execution, 
-        the master will only handle orchestration. This guarantees job performance and clear separation.
+         Actual configuration is in below 
 
-        Most importantly, it provides me with complete toolset configuration freedom—yes, you can do whatever you want without worrying about contaminating other environments.
-        I can't express enough how convenient this will be for future automation in CI/CD pipelines.
-
-     3. SSH Connection Between Master and Agent: 
+     2. SSH Connection in jenkins : 
+      1) Between Controller with Agent
         SSH will be used for secure connections between the Jenkins master and agents. 
         I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up in the Jenkins configuration for SSH-based communication. 
         Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. 
@@ -34,6 +30,18 @@ There will be one more additional step to publish to AWS later on!
         This unintentional secure environment is possible only because I’m currently running both the master and the agent on the same physical machine. 
         
         However, this structure will become an issue if I want to scale the agent container in the future.
+      2) Possible other ssh connection in jenkins 
+          - connection to git hub to pulling the source (applied in my configuration)
+          - connection to AWS to deploy (not yet)
+
+
+
+     3. Master-Agent Mode: 
+        If I want to run Jenkins for various testing conditions in a completely isolated environment and destroy the container after each Jenkins execution, 
+        the master will only handle orchestration. This guarantees job performance and clear separation.
+
+        Most importantly, it provides me with complete toolset configuration freedom—yes, you can do whatever you want without worrying about contaminating other environments.
+        I can't express enough how convenient this will be for future automation in CI/CD pipelines.
 
      4. Using Docker Compose: 
         Docker Compose allows easy management and deployment of both the master and agent. 
@@ -43,7 +51,24 @@ There will be one more additional step to publish to AWS later on!
 
 
 
+    * Actual Configuration 
 
+       
+    1. SSL configuration  
+          In Jenkins, when configuring SSL, you typically need to handle two main components:
+            1) SSL certrification Configuration : Two different way 
+                  Using a nginx proxy server   as reverse Proxy
+                  self-signed certificates to the java keystore : How to enable ssl in jenkins (without docker) https://www.baeldung.com/ops/jenkins-enable-https
+
+            2) port Configuration 
+
+    2. SSH Connection in Jenkins : 
+            
+          There will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
+            1) SSH connection between the master with agent and the other will be agent with git repository
+            2) Between Controller with Agent
+        
+             
 
 
 
