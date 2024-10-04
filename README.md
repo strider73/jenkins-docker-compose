@@ -1,8 +1,8 @@
 # jenkins-docker-compose
 
-Jenkins Docker Compose Setup Guide
+Jenkins Docker Compose Setup Guide for AdventureuTube Project !!!
 
-* How I setup my jenkins / 4 main aspect to configure jenkins  
+* How I setup  jenkins in 4 main aspect 
 
    1. SSL (HTTPS Setup):
     Since I’ve mapped port 8443 for HTTPS in Docker Compose, Jenkins needs to be configured with SSL certificates.
