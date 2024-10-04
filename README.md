@@ -66,8 +66,8 @@ There will be one more additional step to publish to AWS later on!
     2. SSH Connection in Jenkins : 
             
           There will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
-           1) SSH connection between the master with agent and the other will be agent with git repository
-           2) Between Controller with Agent
+           1) SSH connection between the master with agent and the other will be agent with git repository.
+           2) Between Controller with Agent.
         
              
 
