@@ -1,38 +1,45 @@
 # jenkins-docker-compose
 
-Jenkins Docker Compose Setup Guide for AdventureuTube Project !!!
+Jenkins Docker Compose Setup Guide for AdventureTube Project!
 
-* How I setup  jenkins in 4 main aspect 
+As a second step of the DevOps job (after successfully dockerizing the AdventureTube microservice),
+I need a more sophisticated auto-deploy process from the development environment to the test environment, 
+publishing to my Raspberry Pi server (current production server, future test server for the QA process).
 
-   1. SSL (HTTPS Setup):
-    Since I’ve mapped port 8443 for HTTPS in Docker Compose, Jenkins needs to be configured with SSL certificates.
-    I will either provide a self-signed certificate or obtain one from a certificate authority.
-    (In my case, I will set up an Nginx proxy server and create the certificates).
-    After setting it up, make sure Jenkins is properly configured to point to these certificates.
+There will be one more additional step to publish to AWS later on!
 
-   2. Master-Agent Mode:
-    If I want to run Jenkins for various testing conditions in a completely isolated environment and destroy the container after each Jenkins execution,
-    the master will only handle orchestration.
-    This guarantees job performance and clear separation.
-    
-    Most importantly, it provides me with complete toolset configuration freedom—yes, you can do whatever you want without worrying about contaminating other environments.
-    I can't express enough how convenient this will be for future automation in CI/CD pipelines.
+  * How I set up Jenkins in 4 main aspects:
+   
+     1. SSL (HTTPS Setup): 
+         Since I’ve mapped port 8443 for HTTPS in Docker Compose, Jenkins needs to be configured with SSL certificates. 
+         I will either provide a self-signed certificate or obtain one from a certificate authority. 
+         (In my case, I will set up an Nginx proxy server and create the certificates.) 
+         After setting it up, make sure Jenkins is properly configured to point to these certificates.
 
-   3. SSH Connection Between Master and Agent:
-     SSH will be used for secure connections between the Jenkins master and agents.
-     I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up in the Jenkins configuration for SSH-based communication.
-     Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections.
-     You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+     2. Master-Agent Mode: 
+        If I want to run Jenkins for various testing conditions in a completely isolated environment and destroy the container after each Jenkins execution, 
+        the master will only handle orchestration. This guarantees job performance and clear separation.
 
-     But wait a moment!
-     Theoretically, I don’t need to create an SSH channel between the master and agent since they already have good isolation through the Docker Compose network.
-     This unintentional secure environment is possible only because I’m currently running both the master and the agent on the same physical machine.
-     However, this structure will become an issue if I want to scale the agent container in the future.
+        Most importantly, it provides me with complete toolset configuration freedom—yes, you can do whatever you want without worrying about contaminating other environments.
+        I can't express enough how convenient this will be for future automation in CI/CD pipelines.
 
-   4. Using Docker Compose:
-     Docker Compose allows easy management and deployment of both the master and agent.
-     Since I have separate Dockerfiles for each component (master and agent), the separation of the agent container from the controller on a physical level will be much easier!
-     Docker Compose will help in defining the volumes, networks, and dependencies needed for Jenkins to function across your setup, ensuring smooth operations and deployment.
+     3. SSH Connection Between Master and Agent: 
+        SSH will be used for secure connections between the Jenkins master and agents. 
+        I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up in the Jenkins configuration for SSH-based communication. 
+        Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. 
+        You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+
+        But wait a moment! 
+        Theoretically, I don’t need to create an SSH channel between the master and agent since they already have good isolation through the Docker Compose network.
+        This unintentional secure environment is possible only because I’m currently running both the master and the agent on the same physical machine. 
+        
+        However, this structure will become an issue if I want to scale the agent container in the future.
+
+     4. Using Docker Compose: 
+        Docker Compose allows easy management and deployment of both the master and agent. 
+        Since I have separate Dockerfiles for each component (master and agent), 
+        the separation of the agent container from the controller on a physical level will be much easier! 
+        Docker Compose will help define the volumes, networks, and dependencies needed for Jenkins to function across your setup, ensuring smooth operations and deployment.
 
 
 
