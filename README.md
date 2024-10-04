@@ -2,6 +2,49 @@
 
 Jenkins Docker Compose Setup Guide
 
+* How I setup my jenkins 
+    1 .SSL (HTTPS setup):
+      Since I’ve mapped port 8443 for HTTPS in your Docker Compose, Jenkins will need to be configured with SSL certificates.
+      I will either need to provide a self-signed certificate or obtain a certificate from a certificate authority
+      (in my case  I will set up nginx proxy server and create certificatioon ). 
+      After setting it up, make sure Jenkins is properly configured to point to these certificates.
+    2.SSH:
+      SSH will be used for secure connections between Jenkins master and agents. You already have SSH keys (strider_jenkins_key), 
+      and you should ensure they are properly set up in the Jenkins configuration for SSH-based communication.
+      Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+    3.Master-Agent Mode:
+      You’ve configured both the master and agent in Docker Compose. Since they’re running on the same network (jenkins-network), 
+      communication between the two should be seamless, using the container names instead of IP addresses.
+      You'll configure the master to communicate with the agent over SSH (which you've already prepared by setting environment variables like JENKINS_AGENT_SSH_PUBKEY).
+    4.Using Docker Compose:
+      Docker Compose allows easy management and deployment of both the master and agent. Since you have separate Dockerfiles for each component (master and agent), the configuration in Docker Compose is ready to scale.
+      Compose will help in defining the volumes, networks, and dependencies needed for Jenkins to function across your setup, ensuring smooth operations and deployment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 1) SSH Keys
 
     * SSH Key for Communication Between Jenkins Master and Agent:
