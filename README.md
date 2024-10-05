@@ -58,8 +58,18 @@ There will be one more additional step to publish to AWS later on!
           In Jenkins, when configuring SSL, you typically need to handle two main components.
           
             1) SSL certrification Configuration : Two different way 
-                  Using a nginx proxy server   as reverse Proxy
-                  self-signed certificates to the java keystore : How to enable ssl in jenkins (without docker) https://www.baeldung.com/ops/jenkins-enable-https
+                  
+                  Using a nginx proxy server   as reverse Proxy. and This is what i use in AdventureTube 
+                
+                  self-signed certificates to the java keystore :       
+                  How to enable ssl in jenkins (without docker) https://www.baeldung.com/ops/jenkins-enable-https
+
+                     Place the keystore.jks file inside the .ssh directory.
+                     To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:
+                   
+                     ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
+  
+                     This will allow access through port 8443 while disabling HTTP for security reasons.
 
             2) port Configuration 
 
@@ -77,55 +87,46 @@ There will be one more additional step to publish to AWS later on!
                So private key (jenkins-agent-key) will be added in Credential in jenkins master 
                and public key will be passed as a enviroment value in docker compose file for jenkin-agent
 
+
+                Step1)Generate an SSH key pair  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
+       
+                  Name the private key jenkins_agent_key.
+                  Register the private key in Jenkins Master as a credentialfor controller .
+                  Set the public key as an environment variable in your Docker Compose file for agent .
+                  During agent container creation, this public key will be added to the known_hosts file.
+       
+                   Note: Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
+
+       
+
+                 Step2) New Node Setting 
+     
+                   ![new node setting ](images/node-setting.png)
+                   * root directory : /home/jenkins/agent
+                   * Launch method : Launch agents via SSH
+                   * Host : localhost or ipaddress
+  
+                * HostkeyVerification Stratagy 
+                   option 1) Nonn verifying verification Stratagy  => nothing to do but not secure!!!
+                   option 2) Know host verification Stratagy => generate known_hosts file using ssh-keyscan
+                      ![How to add knownHost file to jenkins-master](images/ssh-keyscan.png)
+                       change file permission to jenkins after create file
+                    option 3) MAnually trusted key Verification Stratagy 
+
            2) Git Repository Connection: 
                 The agent or master needs a second SSH connection to access  Git repository.
                 When code is pushed to Git, Jenkins receives a notification (via a webhook), 
                 and the agent initiates the process of pulling the code from the repository for testing, building, and deployment.
+
+                Use the id_ed25519 private key for communication with GitHub.
+                Make sure this key is available on both Jenkins Agent and Master.
+                Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
         
 
            SSH connection between master / agent /github 
 
 
-1) SSH Keys
-
-    * SSH Key for Communication Between Jenkins Master and Agent:
-        
-        Step1)Generate an SSH key pair  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
-       
-        Name the private key jenkins_agent_key.
-        Register the private key in Jenkins Master as a credential.
-        Set the public key as an environment variable in your Docker Compose file.
-        During agent container creation, this public key will be added to the known_hosts file.
-        Note: Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
-
-       
-
-        Step2) New Node Setting 
-        ![new node setting ](images/node-setting.png)
-        * root directory : /home/jenkins/agent
-        * Launch method : Launch agents via SSH
-        * Host : localhost or ipaddress
-        * HostkeyVerification Stratagy 
-             option 1) Nonn verifying verification Stratagy  => nothing to do but not secure!!!
-             option 2) Know host verification Stratagy => generate known_hosts file using ssh-keyscan
-                ![How to add knownHost file to jenkins-master](images/ssh-keyscan.png)
-                 change file permission to jenkins after create file
-             option 3) MAnually trusted key Verification Stratagy 
-
-    * SSH Key for GitHub:
-
-        Use the id_ed25519 private key for communication with GitHub.
-        Make sure this key is available on both Jenkins Agent and Master.
-        Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
-
-2) Jenkins Master SSL Setup(Not neccessary when using a nginx proxy)
-
-       Place the keystore.jks file inside the .ssh directory.
-       To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:
-
-       ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
-  
-       This will allow access through port 8443 while disabling HTTP for security reasons.
+    
 
 
 3) Docker in Docker Issue on Jenkins Agent
