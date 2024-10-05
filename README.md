@@ -100,7 +100,7 @@ There will be one more additional step to publish to AWS later on!
        
 
                  Step2) New Node Setting 
-       ![new node setting ](images/node-setting.png)
+          ![new node setting ](images/node-setting.png)
                    * root directory : /home/jenkins/agent
                    * Launch method : Launch agents via SSH
                    * Host : localhost or ipaddress
