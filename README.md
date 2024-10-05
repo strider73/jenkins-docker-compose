@@ -67,8 +67,15 @@ There will be one more additional step to publish to AWS later on!
             
           There will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
 
-           1) SSH connection between the master with agent and the other will be agent with git repository.
-           2) Between Controller with Agent.
+           1) Controller-Agent Connection: 
+               This allows the Jenkins controller (master) to securely communicate with the agent over SSH. 
+               The controller orchestrates the build and deploy processes, while the agent handles actual execution, 
+               like testing and building.
+
+           2) Git Repository Connection: 
+                The agent or master needs a second SSH connection to access  Git repository.
+                When code is pushed to Git, Jenkins receives a notification (via a webhook), 
+                and the agent initiates the process of pulling the code from the repository for testing, building, and deployment.
         
 
            SSH connection between master / agent /github 
