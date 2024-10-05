@@ -72,6 +72,11 @@ There will be one more additional step to publish to AWS later on!
                The controller orchestrates the build and deploy processes, while the agent handles actual execution, 
                like testing and building.
 
+               In my AdventureTube project  Jenkins Master will initiate the connection (become a ssh client )
+               and agent will receive connection (become a ssh server).
+               So private key (jenkins-agent-key) will be added in Credential in jenkins master 
+               and public key will be passed as a enviroment value in docker compose file for jenkin-agent
+
            2) Git Repository Connection: 
                 The agent or master needs a second SSH connection to access  Git repository.
                 When code is pushed to Git, Jenkins receives a notification (via a webhook), 
