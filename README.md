@@ -38,6 +38,7 @@ There will be total 4 different ssh connection.
         You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
 
         But wait a moment! 
+
         Theoretically, I don’t need to create an SSH channel between the master and agent since they already have good isolation through the Docker Compose network.
         This unintentional secure environment is possible only because I’m currently running both the master and the agent on the same physical machine. 
         
@@ -112,7 +113,7 @@ There will be total 4 different ssh connection.
        
 
                  Step2) New Node Setting 
-          ![new node setting ](images/node-setting.png)
+          ![new node setting](images/node-setting.png)
                    * root directory : /home/jenkins/agent
                    * Launch method : Launch agents via SSH
                    * Host : localhost or ipaddress
