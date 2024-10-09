@@ -12,7 +12,7 @@ There will be total 4 different ssh connection.
      2. jenkins master with Git.
      3. jenkins slave with Git.
           
-     4. jenkins mater with agent .
+     4. jenkins mater with agent.
 
 
 
