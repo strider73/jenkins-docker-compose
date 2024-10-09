@@ -7,6 +7,7 @@ Managing the microservice modules that include building source code, creating Do
 While the initial setup may require a significant amount of time, it will ultimately yield far greater efficiency and results throughout the project. 
 
 There will be total 4 different ssh connection.
+
      1. developer loccal  with Git.
      2. jenkins master with Git.
      3. jenkins slave with Git.
