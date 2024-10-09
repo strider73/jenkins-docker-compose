@@ -2,7 +2,7 @@
 
 Jenkins Docker Compose Setup Guide for AdventureTube Project!
 
-![jenkins-controller/agent][images/AdventureTube-Server-Jenkins.jpg]
+![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
 As a second step of the DevOps job (after successfully dockerizing the AdventureTube microservice),
 I need a more sophisticated auto-deploy process from the development environment to the test environment, 
