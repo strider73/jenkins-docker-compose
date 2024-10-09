@@ -115,6 +115,7 @@ There will be total 4 different ssh connection.
                  Step2) New Node Setting 
 
                  ![new node setting](images/ssh-keyscan.png)
+                 ![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
                    * root directory : /home/jenkins/agent
                    * Launch method : Launch agents via SSH
