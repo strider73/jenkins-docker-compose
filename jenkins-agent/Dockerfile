@@ -31,8 +31,12 @@ RUN usermod -aG docker jenkins
 RUN apt update
 RUN apt install nano
 
-# Copy SSH private key
-COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
+# Copy SSH private key for git hub 
+#COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
+COPY ["./.ssh/" ,"/home/jenkins/.ssh"]
+RUN chown -R jenkins:jenkins "/home/jenkins/.ssh"
+RUN chown -R jenkins:jenkins /home/jenkins/.ssh && chmod 600 /home/jenkins/.ssh/id_ed25519 && chmod 644 /home/jenkins/.ssh/id_ed25519.pub && chmod 644 /home/jenkins/.ssh/known_hosts
+
 
 # Switch back to Jenkins user
 USER jenkins
