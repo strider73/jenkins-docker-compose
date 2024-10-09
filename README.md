@@ -2,6 +2,10 @@
 
 Jenkins Docker Compose Setup Guide for AdventureTube Project!
 
+Managing the microservice modules that include building source code, creating Docker images, and running tests can be a tedious task. This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. Automating the build process using Jenkins CI/CD is essential.
+
+While the initial setup may require a significant amount of time, it will ultimately yield far greater efficiency and results throughout the project. 
+
 ![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
 As a second step of the DevOps job (after successfully dockerizing the AdventureTube microservice),
