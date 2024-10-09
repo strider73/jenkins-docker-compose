@@ -6,15 +6,20 @@ Managing the microservice modules that include building source code, creating Do
 
 While the initial setup may require a significant amount of time, it will ultimately yield far greater efficiency and results throughout the project. 
 
+There will be total 4 different ssh connection 
+     1. developer loccal  with Git
+     2. jenkins master with Git
+     3. jenkins slave with Git
+          and
+     4. jenkins mater with agent 
+
+
+
 ![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
-As a second step of the DevOps job (after successfully dockerizing the AdventureTube microservice),
-I need a more sophisticated auto-deploy process from the development environment to the test environment, 
-publishing to my Raspberry Pi server (current production server, future test server for the QA process).
 
-There will be one more additional step to publish to AWS later on!
 
-  * How I set up Jenkins in 4 main aspects:
+  *  4 main aspects needed to consider to build proper jenkins environment:
    
      1. SSL (HTTPS Setup): 
          Since I’ve mapped port 8443 for HTTPS in Docker Compose, Jenkins needs to be configured with SSL certificates. 
