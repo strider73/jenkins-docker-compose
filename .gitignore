@@ -8,3 +8,5 @@ data/logs/proxy-host-1_access.log
 data/logs/proxy-host-1_error.log
 data/nginx/proxy_host/1.conf
 letsencrypt/renewal/npm-1.conf
+jenkins-agent/.ssh/*
+jenkins-master/.ssh/*
