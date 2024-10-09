@@ -112,10 +112,8 @@ There will be total 4 different ssh connection.
 
        
 
-                 Step2) New Node Setting 
-
-         ![new node setting](images/node-setting.png)
-
+                 Step2) New Node Setting
+                 ![SAsSa](/images/node-setting.png)
                    * root directory : /home/jenkins/agent
                    * Launch method : Launch agents via SSH
                    * Host : localhost or ipaddress
