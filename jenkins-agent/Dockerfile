@@ -23,6 +23,8 @@ RUN chmod +x /usr/local/bin/docker-compose
 
 # Install jq
 RUN apt-get update && apt-get install -y jq
+RUN apt-get update && apt-get install -y openssh-client
+
 
 # Add Jenkins user to Docker group
 RUN usermod -aG docker jenkins
@@ -34,8 +36,10 @@ RUN apt install nano
 # Copy SSH private key for git hub 
 #COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
 COPY ["./.ssh/" ,"/home/jenkins/.ssh"]
-RUN chown -R jenkins:jenkins "/home/jenkins/.ssh"
-RUN chown -R jenkins:jenkins /home/jenkins/.ssh && chmod 600 /home/jenkins/.ssh/id_ed25519 && chmod 644 /home/jenkins/.ssh/id_ed25519.pub && chmod 644 /home/jenkins/.ssh/known_hosts
+RUN chown -R jenkins:jenkins /home/jenkins/.ssh && chmod 600 /home/jenkins/.ssh/id_ed25519 && chmod 644 /home/jenkins/.ssh/id_ed25519.pub 
+
+# Add GitHub's host key to known_hosts
+RUN ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 
 # Switch back to Jenkins user
