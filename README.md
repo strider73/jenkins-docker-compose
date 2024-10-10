@@ -5,25 +5,25 @@ Managing the micro-service modules that include building source code, creating D
 This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. 
 Automating the build process using Jenkins CI/CD is essential.
 
-While the initial setup may require a significant amount of time, it will ultimately yield far greater efficiency and results throughout the project. 
+While the initial setup may take some time, it will ultimately result in greater efficiency throughout the project.
 
 
 ### 1. jenkins master / agent module using a docker compose 
-Let me show you how it actually looks like before you dive in each seperate section 
-
-![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
-
+Before diving into each separate section, here's an overview of how the Jenkins master/agent setup looks:
+  <p align="center"> <img src="/images/AdventureTube-Server-Jenkins.jpg"></p>
 
 
-### 2. Concept you need to understand to  set this up
-As we can see the diagram there is **3 main things** to work with AdventureTube build pipeline .
-   ###### 1. jenkins master/agent  that is working inside docker compose as a same netwrok
+### 2. Key Concepts for the AdventureTube Build Pipeline
+As shown in the diagram, there are three main components to work with for the AdventureTube build pipeline:
+
+   ###### 1. enkins Master/Agent Running Inside Docker Compose
       
        -  jenkins master/ agent 
   
-         If I want to run Jenkins for various testing conditions in a completely isolated environment
+         If I want to run Jenkins for various testing conditions in a completely isolated environment 
          and destroy the container after each Jenkins execution, 
-         The master will only handle orchestration**. This guarantees job performance and clear separation.
+         The master will only handle orchestration.
+         This guarantees job performance and clear separation.
 
          Most importantly, it provides me with complete toolset configuration freedom—yes,
          you can do whatever you want without worrying about contaminating other environments.
@@ -31,22 +31,45 @@ As we can see the diagram there is **3 main things** to work with AdventureTube 
 
 
         -  Docker compose 
+  
           Docker Compose allows easy management and deployment of both the master and agent. 
           Since I have separate Dockerfiles for each component (master and agent), 
-          the separation of the agent container from the controller on a physical level will be much easier! 
-          Docker Compose will help define the volumes, networks, and dependencies needed for Jenkins 
-          to function across your setup, ensuring smooth operations and deployment.
+          the separation of the agent container from the controller on a physical level 
+          will be much easier! Docker Compose will help define the volumes, networks,
+          and dependencies needed for Jenkins to function across your setup, 
+          ensuring smooth operations and deployment.
       
  
    ###### 2.  SSH connection (total 4 different direction)
    
        - jenkins mater with agent.
+             
              SSH will be used for secure connections between the Jenkins master and agents. 
-             I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up 
+             I've used pre-made SSH keys (jenkins_agents_key) and ensured they are properly set up 
              in the Jenkins configuration for SSH-based communication. 
 
-             Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. 
-             You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+             Normally Jenkins agents can authenticate using SSH keys to the master for 
+             secure and passwordless connections. 
+             => "Launch agent by connecting it to the controller" Option 
+
+
+             But it will be opposite in our case since we will use "Launch agents via SSH"!!!!
+             why???? becuase this option give contoller full controll of agent , so contoller 
+             will be able to luanch agent and remove it when its not needed .
+
+             This is such different concept and make such different process,
+             Since jenkins controller will initiate the connection process 
+             Now , controller become ssh client and agent will ssh server 
+
+             During the configuration of "Launch agents vis SSH"
+             You will need to understand the concept of  "Host Key Verification Strategy" 
+             This setting will only apply connection between master with agent 
+
+             There is one more place that "Host Key Verification Strategy" setting exit which in 
+             Jenkins "Security" menu  that is apply to entire jenkins master.
+
+             Detail will be discussed agin in the "Configuration detail again"
+            
 
              But wait a moment! 
 
@@ -73,7 +96,7 @@ As we can see the diagram there is **3 main things** to work with AdventureTube 
 
       
 
-### 3.    Actual Configuration 
+### 3.  Configuration Details
 
        
     1. SSL configuration  
@@ -127,7 +150,7 @@ As we can see the diagram there is **3 main things** to work with AdventureTube 
        
 
                  Step2) New Node Setting
-   ![SAsSa](/images/node-setting.png)
+   <p align="center"> <img src="/images/node-setting.png"></p>
                    * root directory : /home/jenkins/agent
                    * Launch method : Launch agents via SSH and  this will make jenkins master as ssh client and  jenkins agent as ssh server
                                      as connection will  initiate from jenkins master and agent will be created.
