@@ -1,74 +1,83 @@
-# jenkins-docker-compose
 
-Jenkins Docker Compose Setup Guide for AdventureTube Project!
+### Jenkins Docker Compose Setup Guide for AdventureTube Project!
 
-Managing the microservice modules that include building source code, creating Docker images, and running tests can be a tedious task. This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. Automating the build process using Jenkins CI/CD is essential.
+Managing the micro-service modules that include building source code, creating Docker images, and running tests can be a tedious task. 
+This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. 
+Automating the build process using Jenkins CI/CD is essential.
 
 While the initial setup may require a significant amount of time, it will ultimately yield far greater efficiency and results throughout the project. 
 
-There will be total 4 different ssh connection.
 
-     1. developer loccal  with Git.
-     2. jenkins master with Git.
-     3. jenkins slave with Git.
-          
-     4. jenkins mater with agent.
-
-
+##### 1. jenkins master / agent module using a docker compose 
+Let me show you how it actually looks like before you divce in each seperate section 
 
 ![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
 
 
-  *  4 main aspects needed to consider to build proper jenkins environment:
+##### 2. Concept you need to understand to  set this up
+As we can see the diagram there is **3 main things** to work with AdventureTube build pipeline .
+   ###### 1. jenkins master/agent  that is working inside docker compose as a same netwrok
+      
+       -  jenkins master/ agent 
+  
+         If I want to run Jenkins for various testing conditions in a completely isolated environment
+         and destroy the container after each Jenkins execution, 
+         The master will only handle orchestration**. This guarantees job performance and clear separation.
+
+         Most importantly, it provides me with complete toolset configuration freedom—yes,
+         you can do whatever you want without worrying about contaminating other environments.
+         I can't express enough how convenient this will be for future automation in CI/CD pipelines.
+
+
+        -  Docker compose 
+          Docker Compose allows easy management and deployment of both the master and agent. 
+          Since I have separate Dockerfiles for each component (master and agent), 
+          the separation of the agent container from the controller on a physical level will be much easier! 
+          Docker Compose will help define the volumes, networks, and dependencies needed for Jenkins 
+          to function across your setup, ensuring smooth operations and deployment.
+      
+ 
+   ##### 2.  SSH connection (total 4 different direction)
    
-     1. SSL (HTTPS Setup): 
-         Since I’ve mapped port 8443 for HTTPS in Docker Compose, Jenkins needs to be configured with SSL certificates. 
+       - jenkins mater with agent.
+             SSH will be used for secure connections between the Jenkins master and agents. 
+             I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up 
+             in the Jenkins configuration for SSH-based communication. 
+
+             Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. 
+             You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+
+             But wait a moment! 
+
+             Theoretically, I don’t need to create an SSH channel between the master and agent 
+             since they already have good isolation through the Docker Compose network.
+             This unintentional secure environment is possible only because
+             I’m currently running both the master and the agent on the same physical machine. 
+        
+             However, this structure will become an issue if I want to scale the agent container in the future.
+    
+       - developer local  with Git.
+       - jenkins master with Git.
+       - jenkins slave with Git.   
+       
+   ##### 3. SSL configuration 
+   
+      SSL (HTTPS Setup): 
+         Since I’ve mapped port 8443 for HTTPS in Docker Compose, 
+         Jenkins needs to be configured with SSL certificates. 
          I will either provide a self-signed certificate or obtain one from a certificate authority. 
          (In my case, I will set up an Nginx proxy server and create the certificates.) 
          After setting it up, make sure Jenkins is properly configured to point to these certificates.
 
-         Actual configuration is in below 
 
-     2. SSH Connection in jenkins : 
-      1) Between Controller with Agent
-        SSH will be used for secure connections between the Jenkins master and agents. 
-        I've used pre-made SSH keys (strider_jenkins_key) and ensured they are properly set up in the Jenkins configuration for SSH-based communication. 
-        Jenkins agents can authenticate using SSH keys to the master for secure and passwordless connections. 
-        You’ll need to set the correct SSH key in Jenkins when setting up the agent node.
+      
 
-        But wait a moment! 
-
-        Theoretically, I don’t need to create an SSH channel between the master and agent since they already have good isolation through the Docker Compose network.
-        This unintentional secure environment is possible only because I’m currently running both the master and the agent on the same physical machine. 
-        
-        However, this structure will become an issue if I want to scale the agent container in the future.
-      2) Possible other ssh connection in jenkins 
-          - connection to git hub to pulling the source (applied in my configuration)
-          - connection to AWS to deploy (not yet)
-
-
-
-     3. Master-Agent Mode: 
-        If I want to run Jenkins for various testing conditions in a completely isolated environment and destroy the container after each Jenkins execution, 
-        the master will only handle orchestration. This guarantees job performance and clear separation.
-
-        Most importantly, it provides me with complete toolset configuration freedom—yes, you can do whatever you want without worrying about contaminating other environments.
-        I can't express enough how convenient this will be for future automation in CI/CD pipelines.
-
-     4. Using Docker Compose: 
-        Docker Compose allows easy management and deployment of both the master and agent. 
-        Since I have separate Dockerfiles for each component (master and agent), 
-        the separation of the agent container from the controller on a physical level will be much easier! 
-        Docker Compose will help define the volumes, networks, and dependencies needed for Jenkins to function across your setup, ensuring smooth operations and deployment.
-
-
-
-    * Actual Configuration 
+##### 3.    Actual Configuration 
 
        
     1. SSL configuration  
-          In Jenkins, when configuring SSL, you typically need to handle two main components.
+          In Jenkins, when configuring SSL, you typically need to handle two main components. 
           
             1) SSL certrification Configuration : Two different way 
                   
@@ -77,16 +86,19 @@ There will be total 4 different ssh connection.
                   self-signed certificates to the java keystore :       
                   How to enable ssl in jenkins (without docker) https://www.baeldung.com/ops/jenkins-enable-https
 
-                     Place the keystore.jks file inside the .ssh directory.
-                     To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:
+                  Place the keystore.jks file inside the .ssh directory.
+                  To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:
                    
-                     ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
+                      ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/> > jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
   
-                     This will allow access through port 8443 while disabling HTTP for security reasons.
+                  This will allow access through port 8443 while disabling HTTP for security reasons.
 
             2) port Configuration 
 
     2. SSH Connection in Jenkins : 
+
+          Underestanding Hostkey Verification Strategy 
+          
             
           There will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
 
@@ -110,18 +122,22 @@ There will be total 4 different ssh connection.
        
                    Note: Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
 
+                  in my project 
+
        
 
                  Step2) New Node Setting
-                 ![SAsSa](/images/node-setting.png)
+   ![SAsSa](/images/node-setting.png)
                    * root directory : /home/jenkins/agent
-                   * Launch method : Launch agents via SSH
+                   * Launch method : Launch agents via SSH and  this will make jenkins master as ssh client and  jenkins agent as ssh server
+                                     as connection will  initiate from jenkins master and agent will be created.
+
                    * Host : localhost or ipaddress
   
                 * HostkeyVerification Stratagy 
-                   option 1) Nonn verifying verification Stratagy  => nothing to do but not secure!!!
-                   option 2) Know host verification Stratagy => generate known_hosts file using ssh-keyscan
-                      ![How to add knownHost file to jenkins-master](images/ssh-keyscan.png)
+                   option 1) None verifying verification Stratagy  => nothing to do but not secure!!!
+                   option 2) Known host verification Stratagy => generate known_hosts file using ssh-keyscan
+   ![How to add knownHosts file to jenkins-master](images/ssh-keyscan.png)
                        change file permission to jenkins after create file
                     option 3) MAnually trusted key Verification Stratagy 
 
@@ -133,6 +149,9 @@ There will be total 4 different ssh connection.
                 Use the id_ed25519 private key for communication with GitHub.
                 Make sure this key is available on both Jenkins Agent and Master.
                 Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
+
+
+
         
 
            SSH connection between master / agent /github 
