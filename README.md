@@ -1,5 +1,5 @@
 
-### Jenkins Docker Compose Setup Guide for AdventureTube Project!
+# Jenkins Docker Compose Setup Guide for AdventureTube Project!
 
 Managing the micro-service modules that include building source code, creating Docker images, and running tests can be a tedious task. 
 This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. 
@@ -8,14 +8,14 @@ Automating the build process using Jenkins CI/CD is essential.
 While the initial setup may require a significant amount of time, it will ultimately yield far greater efficiency and results throughout the project. 
 
 
-##### 1. jenkins master / agent module using a docker compose 
+### 1. jenkins master / agent module using a docker compose 
 Let me show you how it actually looks like before you divce in each seperate section 
 
 ![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
 
 
-##### 2. Concept you need to understand to  set this up
+### 2. Concept you need to understand to  set this up
 As we can see the diagram there is **3 main things** to work with AdventureTube build pipeline .
    ###### 1. jenkins master/agent  that is working inside docker compose as a same netwrok
       
@@ -38,7 +38,7 @@ As we can see the diagram there is **3 main things** to work with AdventureTube 
           to function across your setup, ensuring smooth operations and deployment.
       
  
-   ##### 2.  SSH connection (total 4 different direction)
+   ###### 2.  SSH connection (total 4 different direction)
    
        - jenkins mater with agent.
              SSH will be used for secure connections between the Jenkins master and agents. 
@@ -61,7 +61,7 @@ As we can see the diagram there is **3 main things** to work with AdventureTube 
        - jenkins master with Git.
        - jenkins slave with Git.   
        
-   ##### 3. SSL configuration 
+   ###### 3. SSL configuration 
    
       SSL (HTTPS Setup): 
          Since I’ve mapped port 8443 for HTTPS in Docker Compose, 
@@ -73,7 +73,7 @@ As we can see the diagram there is **3 main things** to work with AdventureTube 
 
       
 
-##### 3.    Actual Configuration 
+### 3.    Actual Configuration 
 
        
     1. SSL configuration  
