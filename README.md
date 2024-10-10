@@ -9,7 +9,7 @@ While the initial setup may require a significant amount of time, it will ultima
 
 
 ### 1. jenkins master / agent module using a docker compose 
-Let me show you how it actually looks like before you divce in each seperate section 
+Let me show you how it actually looks like before you dive in each seperate section 
 
 ![jenkins-controller/agent](images/AdventureTube-Server-Jenkins.jpg)
 
