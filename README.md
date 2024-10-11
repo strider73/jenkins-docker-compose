@@ -56,11 +56,11 @@ secure and passwordless connections, which is "Launch agent by connecting it to 
 
 
 But it will be opposite in our case since we will use "Launch agents via SSH"!!!!
-**Why???? becuase this option give contoller full controll of agent** , 
+*Why???? becuase this option give contoller full controll of agent* , 
 so contoller will be able to luanch agent and remove it when its not needed cool!!.
 
 This is such different concept and make such different process,Since jenkins controller will initiate 
-the connection process,   Now , **controller become ssh client and agent will ssh server**. 
+the connection process,   Now , *controller become ssh client and agent will ssh server*. 
 
 During the configuration of **"Launch agents vis SSH"**
 You will need to understand the concept of  **"Host Key Verification Strategy"** 
@@ -74,19 +74,26 @@ Detail will be discussed agin in the "Configuration detail again"
 
 But wait a moment! 
 
-**Theoretically, I don’t need to create an SSH channel between the master and agent 
-since they already have good isolation through the Docker Compose network**.
+*Theoretically, I don’t need to create an SSH channel between the master and agent 
+since they already have good isolation through the Docker Compose network*.
 This unintentional secure environment is possible only because
 I’m currently running both the master and the agent on the same physical machine. 
 
-However, this structure will **become an issue if I want to scale the agent container in the future**.
+However, this structure will *become an issue if I want to scale the agent container in the future*.
 
 **3 more diffrent connection to Git**
 - developer local  with Git.
 - jenkins master with Git.
 - jenkins slave with Git.   
 
-##### 3. SSL configuration 
+These connection are used all same key pair  but just heading a different direction 
+In order to make this all 3 connection properly work  you need to proper understaning of 
+    
+      - Basic understanfing of How SSH working  
+      - What is does known_host , authroized file under .ssh mean 
+      - what is mean "Host key Verification Strategy" for all 4 different option 
+
+#### 3. SSL configuration 
 
 SSL (HTTPS Setup): 
 Since I’ve mapped port 8443 for HTTPS in Docker Compose, 
@@ -101,35 +108,29 @@ After setting it up, make sure Jenkins is properly configured to point to these 
 ## 3.  Configuration Details
 
 
-1. SSL configuration  
+#### 1. SSL configuration  
 In Jenkins, when configuring SSL, you typically need to handle two main components. 
 
-1) SSL certrification Configuration : Two different way 
-
-Using a nginx proxy server   as reverse Proxy. and This is what i use in AdventureTube 
-
-self-signed certificates to the java keystore :       
+**SSL certrification Configuration : Two different way**
+ 1. Using a nginx proxy server   as reverse Proxy. and This is what i use in AdventureTube 
+ 2. self-signed certificates to the java keystore :       
 [How to enable ssl in jenkins without docker](https://www.baeldung.com/ops/jenkins-enable-https)
 
-Place the keystore.jks file inside the .ssh directory.
-
-
-2) port Configuration 
+**port Configuration**
 
 To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:
 
-'ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/> > jenkins_home/.ssl keystore.jks" --httpsKeyStorePassword="5785ch00"'
+> ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
+
 
 This will allow access through port 8443 while disabling HTTP for security reasons.
 
-1. SSH Connection in Jenkins : 
-
-Underestanding Hostkey Verification Strategy 
+#### 2. SSH Connection in Jenkins : 
 
 
 There will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
 
-1) Controller-Agent Connection: 
+**1. Controller-Agent Connection**
 This allows the Jenkins controller (master) to securely communicate with the agent over SSH. 
 The controller orchestrates the build and deploy processes, while the agent handles actual execution, 
 like testing and building.
@@ -140,7 +141,7 @@ So private key (jenkins-agent-key) will be added in Credential in jenkins master
 and public key will be passed as a enviroment value in docker compose file for jenkin-agent
 
 
-Step1)Generate an SSH key pair  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
+ Step1).Generate an SSH key pair  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
 
 Name the private key jenkins_agent_key.
 Register the private key in Jenkins Master as a credentialfor controller .
