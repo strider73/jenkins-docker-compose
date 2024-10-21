@@ -35,7 +35,8 @@ services:
       - JENKINS_AGENT_NAME=ssh-agent
       # just remember PRIVATE KEY will need extra carrage-return at the end of context once it uploaded to git hub .. Dont know why 
       # So added carrage-return and did ulpoad to git again and seems like working now but need to check in every fresh installation process
-      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDQb6D0D31Tlv8kVg0VdRphOMo4S6nZjCCib3xBWx0cQCvmtA/JrFGXcvdBDP5ii1DubAYsR+PuEYOzECzIbli6jZaIAV60/KxYbVD/Zr5ZpcC9V2j10ScbsIKhWB0+moMw55CMzmiEwQykLRIU5Lb1zjkVjHc6e3EF5NagbS5xnEixPKtqZ14ow7PWti3JYPGfXmaw4eksvKlEPdqqDpgSiOetEeQnt/4BOmkv5cITOWwTwLfsMUsf/O0sg614MFN1cHQfrbyTCHtPVjTsxjol29x9SVosr1Jd9RqfZEq8dMeYz7lVzWzhstrHMkkEZA6SpxK79Nqe0HfsLpyoLG11zDT9jJNNojQ6g8oMzn70QBMIfYUf5GCDaC46we/rKHBj8G0fD1vtfYC7Agn0D52RzbzaVzedoErq2kdbhqYuNYsX+cdGRx3dKASg99vjv1R6Ulbx9cH6ROv0ves2h2UyR1RLaMks8Fh+oCRBLa38c8+G07AOgLNx9LxhYdkIMsE= jenkins@c2b67b7954af
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDQKSl9plz2uFm1r98ZOxUh2rAdU9QX2u8tR5zlO1D+XWM5jhl6KShmQVDCUdKzh8PVGf9/qAFLKsyZ+rPjjSu0d2dIY0tzOllW0StsHvREKAPgZE3GxczozbSfONz0qTK8oWwQ+Qr7FABFO6WZE8Y2dAb5guKgF3Ee1bucXTKYJLrsu45qT5cZQ7fGnZCZ6fjUrkPNmUF4Z5owvqokCcnzsDwleoVivDtxyq8Eb6KO+hKQp/IMHzHVW5teTbQiUQj1V0mbclgmMJoZbF7cY8UnTI8p7kXBZvBXe3+DW5Cypqj6+xtcWLfzIEubHrkwveBmpPk45eRMFtBSUwXHf7oCYIuwqjz6p7i0BRXEFbaEJ7U5TSEfeYBfgRliO+v3U4HPe+3yViE+MSqr3cUqvop0qaakHxM6R6TuTK2zzSOaCEZqcv1MKQLarzo8aE7E3pRG9QgKgqRo3A68/HucmdQtDTxJ+5UxABAeeEwZGN29W+54HPhGw/JrRjg6II/6T88= chrislee@localhost
+
 
                                  
 

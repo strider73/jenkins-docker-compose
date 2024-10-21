@@ -3,7 +3,7 @@
 
 Managing the micro-service modules that include building source code, creating Docker images, and running tests can be a tedious task. 
 This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. 
-Automating the build process using Jenkins CI/CD is essential.
+Automating the build process using Jenkins CI/CD  is essential.
 
 While the initial setup may take some time, it will ultimately result in greater efficiency throughout the project.
 
@@ -12,8 +12,10 @@ While the initial setup may take some time, it will ultimately result in greater
 Before diving into each separate section, here's an overview of **how the Jenkins master/agent setup looks**
 <p align="center"> <img src="/images/AdventureTube-Server-Jenkins.jpg"></p>
 
->Source code from developer will heading to the Git and this will causing a update notification to jenkins controller that will become chain reaction to jenkins agent to pull the new souce and 'compile/build/test/on'
-it's own independent docker environment and eventurally build new image and publish to the actual service in Rasberry-pi server as end of build pipeline .
+Thre is three seprate tasks in order to finalize update process to rasberry-pi server.
+>1. After the finished local test Source code from developer will heading to the Git  
+>2. This will causing a update notification to jenkins controller that will become chain reaction to jenkins agent to pull the new souce and 'compile/build/test' on it's own independent docker environment 
+>3. Eventurally build new image and publish to the actual service in Rasberry-pi server as end of build pipeline.
 
 
 
@@ -22,8 +24,9 @@ it's own independent docker environment and eventurally build new image and publ
 As shown in the diagram, there are three main components to work with for the AdventureTube build pipeline:
 
 #### 1. Jenkins Master/Agent Running Inside Docker Compose
+      
 
-**Jenkins master/ agent**
+**Why you shoud consider Jenkins master/ agent**
 
 If I want to run Jenkins for various testing conditions in a completely isolated environment 
 and destroy the container after each Jenkins execution, *The master will only handle orchestration*.
@@ -33,7 +36,7 @@ Most importantly, **it provides me with complete toolset configuration freedom**
 you can do whatever you want without worrying about contaminating other environments.
 I can't express enough how convenient this will be for future automation in CI/CD pipelines.
 
-**Docker compose**
+**Using Docker compose is better**
 
 Docker Compose allows easy management and deployment of both the master and agent. 
 Since I have separate Dockerfiles for each component (master and agent), 
@@ -43,9 +46,44 @@ and dependencies needed for Jenkins to function across your setup,
 ensuring smooth operations and deployment.
 
 
-#### 2.  SSH connection (total 4 different direction)
+#### 2.  SSH connection (total 4 different direction in AdvnetureTube)
+**Basic concept of SSH Connection**
 
-**jenkins mater with agent.**
+Before explain seeting of  ssh in Adventureutube let's have a look basic concept of ssh.
+
+When establishing an SSH connection, there are few  concept need to be understand :
+> ###### Key Pair 
+> * The private key is kept secure on the client machine and must never leave it
+> * The public key is shared and placed on the the remote server you want to connect to in the ~/.ssh/known_hosts
+
+> ###### Identification 
+> 
+> *  Server's identification 
+When the client attempts to connect to the server, the server sends its public key from "authorized_keys" to the client.
+If the client has never connected to this server before, the client will be prompted to register the server's public key in the "known_hosts" file.
+> * Client's identification 
+Once the server is identified, the server issues a challenge to the client.
+The client must sign this challenge using its private key and send the signed response back to the server.
+The server then verifies the response using the client’s public key, which is stored in the server’s authorized_keys file.
+and that is way to establishing ssh connection.
+
+> ###### HostkeyVerification 
+>  * Detail will be discussed agin in the "Configuration detail again"
+
+
+
+There is additional condition that neeed to be concidered for Adventuretube which is 
+both jenkins master and agent are running on docker using a docker compose file
+and that is why we going to setup with existing key pair by 
+   > put the public key in jenkins-agent enviroment value
+   > copy key pair to  jenkins master docker image  
+
+
+
+
+
+
+**Jenkins mater with agent.**
 
 SSH will be used for secure connections between the Jenkins master and agents. 
 I've used pre-made SSH keys (jenkins_agents_key) and ensured they are properly set up 
@@ -82,16 +120,12 @@ I’m currently running both the master and the agent on the same physical machi
 However, this structure will *become an issue if I want to scale the agent container in the future*.
 
 **3 more diffrent connection to Git**
-- developer local  with Git.
 - jenkins master with Git.
 - jenkins slave with Git.   
+- developer local  with Git.
 
-These connection are used all same key pair  but just heading a different direction 
-In order to make this all 3 connection properly work  you need to proper understaning of 
-    
-      - Basic understanfing of How SSH working  
-      - What is does known_host , authroized file under .ssh mean 
-      - what is mean "Host key Verification Strategy" for all 4 different option 
+
+These connection are used all same key pair  but just heading a different direction.
 
 #### 3. SSL configuration 
 
@@ -105,7 +139,7 @@ After setting it up, make sure Jenkins is properly configured to point to these 
 
 
 
-## 3.  Configuration Details
+## 3.  Configuration Details in Action
 
 
 #### 1. SSL configuration  
@@ -128,20 +162,20 @@ This will allow access through port 8443 while disabling HTTP for security reaso
 #### 2. SSH Connection in Jenkins : 
 
 
-There will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
+As I mentionedf before there will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
 
 **1. Controller-Agent Connection**
 This allows the Jenkins controller (master) to securely communicate with the agent over SSH. 
 The controller orchestrates the build and deploy processes, while the agent handles actual execution, 
 like testing and building.
 
-In my AdventureTube project  Jenkins Master will initiate the connection (become a ssh client )
+In my AdventureTube project ,Jenkins Master will initiate the connection (become a ssh client )
 and agent will receive connection (become a ssh server).
 So private key (jenkins-agent-key) will be added in Credential in jenkins master 
 and public key will be passed as a enviroment value in docker compose file for jenkin-agent
 
 
- Step1).Generate an SSH key pair  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
+Step1).Generate an SSH key pair and register for both master and agent  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
 
 Name the private key jenkins_agent_key.
 Register the private key in Jenkins Master as a credentialfor controller .
@@ -150,11 +184,9 @@ During agent container creation, this public key will be added to the known_host
 
 Note: Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
 
-in my project 
 
 
-
-Step2) New Node Setting
+Step2) New node setting
 <p align="center"> <img src="/images/node-setting.png"></p>
 * root directory : /home/jenkins/agent
 * Launch method : Launch agents via SSH and  this will make jenkins master as ssh client and  jenkins agent as ssh server
@@ -164,12 +196,12 @@ Step2) New Node Setting
 
 * HostkeyVerification Stratagy 
 option 1) None verifying verification Stratagy  => nothing to do but not secure!!!
-option 2) Known host verification Stratagy => generate known_hosts file using ssh-keyscan
-![How to add knownHosts file to jenkins-master](images/ssh-keyscan.png)
-change file permission to jenkins after create file
-option 3) MAnually trusted key Verification Stratagy 
+option 2) Known host verification Stratagy => generate known_hosts on jenkins master  using ssh-keyscan will add the the agents's public key 
+![How to add knownHosts file to jenkins-master](images/key-scan-image.png)
+change file permission to jenkins after create file,This way Jenkins master can securely connect to the agent without manual prompts or password authentication.
+option 3) Manually trusted key Verification Stratagy 
 
-2) Git Repository Connection: 
+**2. Git Repository Connection** 
 The agent or master needs a second SSH connection to access  Git repository.
 When code is pushed to Git, Jenkins receives a notification (via a webhook), 
 and the agent initiates the process of pulling the code from the repository for testing, building, and deployment.
@@ -188,7 +220,7 @@ SSH connection between master / agent /github
 
 
 
-3) Docker in Docker Issue on Jenkins Agent
+1) Docker in Docker Issue on Jenkins Agent
 
 Jenkins Agent may encounter permission issues when accessing /var/run/docker.sock.
 Although the Dockerfile for Jenkins Agent adds the Jenkins user to the Docker group within the agent container, 
@@ -206,5 +238,7 @@ Restart the Docker service: sudo service docker restart
 Note: Changing permissions to 666 for /var/run/docker.sock is not recommended for security reasons, so the provided solution is a safer alternative.
 
 By following these instructions, you should be able to set up Jenkins with Docker Compose and resolve common SSH and Docker-related issues.
+
+
 
 
