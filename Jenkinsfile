@@ -13,12 +13,18 @@ pipeline {
                 '''
             }
         }
-
-        stage('Prune Docker Data') {
+        stage('Clone Repository') {
             steps {
-                sh 'docker system prune -a --volumes -f'
+                // Pull the latest code from GitHub
+                git 'git@github.com:strider73/jenkins-docker-compose.git'
             }
         }
+
+        // stage('Prune Docker Data') {
+        //     steps {
+        //         sh 'docker system prune -a --volumes -f'
+        //     }
+        // }
 
         // stage('Start container') {
         //     steps {
