@@ -201,6 +201,9 @@ option 2) Known host verification Stratagy => generate known_hosts on jenkins ma
 change file permission to jenkins after create file,This way Jenkins master can securely connect to the agent without manual prompts or password authentication.
 option 3) Manually trusted key Verification Stratagy 
 
+<p align="center"> <img src="/images/Hostkey verification Strategy .jpg"></p>
+
+
 **2. Git Repository Connection** 
 The agent or master needs a second SSH connection to access  Git repository.
 When code is pushed to Git, Jenkins receives a notification (via a webhook), 
