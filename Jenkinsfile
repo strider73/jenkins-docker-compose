@@ -20,6 +20,16 @@ pipeline {
             }
         }
 
+        stage('Build Package') {
+            steps {
+                script {
+                    // Use Maven wrapper to build the package
+                    sh './mvnw package -DskipTests'
+                }
+            }
+        }
+
+
         stage('Prune Docker Data') {
             steps {
                 sh 'docker system prune -a --volumes -f'
