@@ -20,18 +20,18 @@ pipeline {
             }
         }
 
-        // stage('Prune Docker Data') {
-        //     steps {
-        //         sh 'docker system prune -a --volumes -f'
-        //     }
-        // }
+        stage('Prune Docker Data') {
+            steps {
+                sh 'docker system prune -a --volumes -f'
+            }
+        }
 
-        // stage('Start container') {
-        //     steps {
-        //         sh 'docker compose up -d --no-color --wait'
-        //         sh 'docker compose ps'
-        //     }
-        // }
+        stage('Start container') {
+            steps {
+                sh 'docker compose up -d --no-color --wait'
+                sh 'docker compose ps'
+            }
+        }
 
         // stage('Run test against the container') {
         //     steps {
