@@ -32,6 +32,8 @@ RUN usermod -aG docker jenkins
 # Install nano (optional)
 RUN apt update
 RUN apt install nano
+# Install Maven
+RUN apt-get update && apt-get install -y maven
 
 # Copy SSH private key for git hub 
 #COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
