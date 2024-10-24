@@ -16,7 +16,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Pull the latest code from GitHub
-                git 'git@github.com:strider73/jenkins-docker-compose.git'
+                git branch: 'main', url: 'git@github.com:strider73/jenkins-docker-compose.git'
             }
         }
 
