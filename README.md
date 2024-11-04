@@ -227,20 +227,30 @@ SSH connection between master / agent /github
 
 Jenkins Agent may encounter permission issues when accessing /var/run/docker.sock.
 Although the Dockerfile for Jenkins Agent adds the Jenkins user to the Docker group within the agent container, 
-it doesn't affect the Docker group on the host machine.
+it doesn't affect the Docker group on the host machine successfully .
+beacuse There is existing docker group in jenkins-agent basic image that  potentially can be different group id with 
+docker group id in host machine. so in the docker file it is require to check the exsiting docker user and delete first 
+to create the new one with same docker id in the host machine !!!!. and it took me couple of days to find since 
+the error message was not clear and there is no other reference that I can found that mention this docker group id matching t
+to avoid permission issue . OMG !!!!
+
+
 
 To resolve this, you can follow these steps:
 (Fith solution in https://phoenixnap.com/kb/docker-permission-denied) 
-Edit the Docker service file by running: sudo nano /usr/lib/systemd/system/docker.service
-Append the following lines to the bottom of the Service section:
+Edit the Docker service file by running: 
+  sudo nano /usr/lib/systemd/system/docker.service
+  Append the following lines to the bottom of the Service section:
 
-SupplementaryGroups=docker
-ExecStartPost=/bin/chmod 666 /var/run/docker.sock
+   >SupplementaryGroups=docker
+    ExecStartPost=/bin/chmod 666 /var/run/docker.sock
 
 Restart the Docker service: sudo service docker restart
 Note: Changing permissions to 666 for /var/run/docker.sock is not recommended for security reasons, so the provided solution is a safer alternative.
 
 By following these instructions, you should be able to set up Jenkins with Docker Compose and resolve common SSH and Docker-related issues.
+
+## ADD YOUTUBE VIDEO!!!!!
 
 
 

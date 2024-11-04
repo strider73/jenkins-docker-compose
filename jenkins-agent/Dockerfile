@@ -27,7 +27,14 @@ RUN apt-get update && apt-get install -y openssh-client
 
 
 # Add Jenkins user to Docker group
-RUN usermod -aG docker jenkins
+ARG DOCKER_GID=992
+# Ensure the docker group exists with the correct GID
+RUN if getent group docker; then \
+        groupdel docker; \
+    fi && \
+    groupadd -g ${DOCKER_GID} docker && \
+    usermod -aG docker jenkins
+
 
 # Install nano (optional)
 RUN apt update
@@ -38,7 +45,7 @@ RUN apt-get update && apt-get install -y maven
 # Copy SSH private key for git hub 
 #COPY .ssh/id_ed25519 /home/jenkins/.ssh/id_ed25519
 COPY ["./.ssh/" ,"/home/jenkins/.ssh"]
-RUN chown -R jenkins:jenkins /home/jenkins/.ssh && chmod 600 /home/jenkins/.ssh/id_ed25519 && chmod 644 /home/jenkins/.ssh/id_ed25519.pub 
+RUN chown -R jenkins:jenkins /home/jenkins/.ssh && chmod 700 /home/jenkins/.ssh/ && chmod 600 /home/jenkins/.ssh/*
 
 # Add GitHub's host key to known_hosts
 RUN ssh-keyscan github.com >> ~/.ssh/known_hosts
