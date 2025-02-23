@@ -1,257 +1,142 @@
+# AdventureTube CI/CD Pipeline Documentation
 
-# Jenkins Docker Compose Setup Guide for AdventureTube Project!
+## Overview
 
-Managing the micro-service modules that include building source code, creating Docker images, and running tests can be a tedious task. 
-This process must be performed not only locally but also on remote production or integration test servers, making it prone to human error and time-consuming. 
-Automating the build process using Jenkins CI/CD  is essential.
+AdventureTube utilizes a backend system comprised of microservices. Each microservice is independently built as a Docker container and managed using Docker Compose. While this architecture ensures modularity and streamlined updates, the build and test processes can be repetitive and time-consuming. To automate and optimize these processes, Jenkins has been integrated to establish a **Continuous Integration and Continuous Deployment (CI/CD) pipeline**, ensuring efficiency, consistency, and scalability in the development workflow.
 
-While the initial setup may take some time, it will ultimately result in greater efficiency throughout the project.
+The AdventureTube project follows a structured CI/CD pipeline to automate building, testing, and deploying microservices. The pipeline is designed to work with two Raspberry Pi devices:
 
+- **Pi1**: Runs Jenkins Master, PostgreSQL, MongoDB, and Kafka.
+- **Pi2**: Runs microservices and Spring Cloud components (Eureka, Config Server, Gateway).
 
-## 1. Bird of View of Adventuretube jenkins 
-Before diving into each separate section, here's an overview of **how the Jenkins master/agent setup looks**
-<p align="center"> <img src="/images/AdventureTube-Server-Jenkins.jpg"></p>
+---
 
-Thre is three seprate tasks in order to finalize update process to rasberry-pi server.
->1. After the finished local test Source code from developer will heading to the Git  
->2. This will causing a update notification to jenkins controller that will become chain reaction to jenkins agent to pull the new souce and 'compile/build/test' on it's own independent docker environment 
->3. Eventurally build new image and publish to the actual service in Rasberry-pi server as end of build pipeline.
+## **Jenkins Master/Agent Architecture**
 
+Jenkins master/agent architecture is the best choice for testing conditions in a completely isolated environment. The master handles **only orchestration**, while the agent executes the tasks. This guarantees job performance and clear separation.
 
+Most importantly, **it provides complete toolset configuration freedom**—you can configure and modify environments without affecting other builds. This flexibility is crucial for future automation in CI/CD pipelines.
 
+---
 
-## 2. Key Concepts for the AdventureTube Build Pipeline
-As shown in the diagram, there are three main components to work with for the AdventureTube build pipeline:
+## **Jenkins Master/Agent SSH Connection Setup**
 
-#### 1. Jenkins Master/Agent Running Inside Docker Compose
-      
+SSH is used for secure connections between the Jenkins master and agents. Pre-made SSH keys (`jenkins_agent_key`) are set up for authentication within the Jenkins configuration.
 
-**Why you shoud consider Jenkins master/ agent**
+Jenkins agents typically authenticate using SSH keys under the **"Launch agent by connecting it to the controller"** option. However, in this setup, **"Launch agents via SSH"** is used instead. This allows the **controller to initiate, control, and remove agents dynamically**.
 
-If I want to run Jenkins for various testing conditions in a completely isolated environment 
-and destroy the container after each Jenkins execution, *The master will only handle orchestration*.
-This guarantees job performance and clear separation.
+### **Key Differences in SSH Setup**
 
-Most importantly, **it provides me with complete toolset configuration freedom**—yes,
-you can do whatever you want without worrying about contaminating other environments.
-I can't express enough how convenient this will be for future automation in CI/CD pipelines.
+- **Jenkins Master:** Holds the **private key**.
+- **Jenkins Agent:** Holds the **public key**.
 
-**Using Docker compose is better**
+This is the **opposite** of the standard Jenkins setup where the agent connects to the master.
 
-Docker Compose allows easy management and deployment of both the master and agent. 
-Since I have separate Dockerfiles for each component (master and agent), 
-the separation of the agent container from the controller on a physical level will be much easier! 
-Docker Compose will help define the volumes, networks,
-and dependencies needed for Jenkins to function across your setup, 
-ensuring smooth operations and deployment.
+During the configuration of **"Launch agents via SSH"**, you must understand the **Host Key Verification Strategy**. This setting applies to connections between the master and agent.
 
+---
 
-#### 2.  SSH connection (total 4 different direction in AdvnetureTube)
-**Basic concept of SSH Connection**
+## **Step 1: SSL Configuration**
 
-Before explain seeting of  ssh in Adventureutube let's have a look basic concept of ssh.
+In Jenkins, when configuring SSL, you typically need to handle two main components:
 
-When establishing an SSH connection, there are few  concept need to be understand :
-> ###### Key Pair 
-> * The private key is kept secure on the client machine and must never leave it
-> * The public key is shared and placed on the the remote server you want to connect to in the ~/.ssh/known_hosts
+### **SSL Certification Configuration**
 
-> ###### Identification 
-> 
-> *  Server's identification 
-When the client attempts to connect to the server, the server sends its public key from "authorized_keys" to the client.
-If the client has never connected to this server before, the client will be prompted to register the server's public key in the "known_hosts" file.
-> * Client's identification 
-Once the server is identified, the server issues a challenge to the client.
-The client must sign this challenge using its private key and send the signed response back to the server.
-The server then verifies the response using the client’s public key, which is stored in the server’s authorized_keys file.
-and that is way to establishing ssh connection.
+- **Using an Nginx proxy server as a reverse proxy** (this is the setup used in AdventureTube).
+- **Self-signed certificates to the Java Keystore.**
 
-> ###### HostkeyVerification 
->  * Detail will be discussed agin in the "Configuration detail again"
-
-
-
-There is additional condition that neeed to be concidered for Adventuretube which is 
-both jenkins master and agent are running on docker using a docker compose file
-and that is why we going to setup with existing key pair by 
-   > put the public key in jenkins-agent enviroment value
-   > copy key pair to  jenkins master docker image  
-
-
-
-
-
-
-**Jenkins mater with agent.**
-
-SSH will be used for secure connections between the Jenkins master and agents. 
-I've used pre-made SSH keys (jenkins_agents_key) and ensured they are properly set up 
-in the Jenkins configuration for SSH-based communication. 
-
-Normally Jenkins agents can authenticate using SSH keys to the master for 
-secure and passwordless connections, which is "Launch agent by connecting it to the controller" Option. 
-
-
-But it will be opposite in our case since we will use "Launch agents via SSH"!!!!
-*Why???? becuase this option give contoller full controll of agent* , 
-so contoller will be able to luanch agent and remove it when its not needed cool!!.
-
-This is such different concept and make such different process,Since jenkins controller will initiate 
-the connection process,   Now , *controller become ssh client and agent will ssh server*. 
-
-During the configuration of **"Launch agents vis SSH"**
-You will need to understand the concept of  **"Host Key Verification Strategy"** 
-This setting will only apply connection between master with agent 
-
-There is one more place that "Host Key Verification Strategy" setting exit which in 
-Jenkins "Security" menu  that is apply to entire jenkins master.
-
-Detail will be discussed agin in the "Configuration detail again"
-
-
-But wait a moment! 
-
-*Theoretically, I don’t need to create an SSH channel between the master and agent 
-since they already have good isolation through the Docker Compose network*.
-This unintentional secure environment is possible only because
-I’m currently running both the master and the agent on the same physical machine. 
-
-However, this structure will *become an issue if I want to scale the agent container in the future*.
-
-**3 more diffrent connection to Git**
-- jenkins master with Git.
-- jenkins slave with Git.   
-- developer local  with Git.
-
-
-These connection are used all same key pair  but just heading a different direction.
-
-#### 3. SSL configuration 
-
-SSL (HTTPS Setup): 
-Since I’ve mapped port 8443 for HTTPS in Docker Compose, 
-Jenkins needs to be configured with SSL certificates. 
-I will either provide a self-signed certificate or obtain one from a certificate authority. 
-(In my case, I will set up an Nginx proxy server and create the certificates.) 
-After setting it up, make sure Jenkins is properly configured to point to these certificates.
-
-
-
-
-## 3.  Configuration Details in Action
-
-
-#### 1. SSL configuration  
-In Jenkins, when configuring SSL, you typically need to handle two main components. 
-
-**SSL certrification Configuration : Two different way**
- 1. Using a nginx proxy server   as reverse Proxy. and This is what i use in AdventureTube 
- 2. self-signed certificates to the java keystore :       
-[How to enable ssl in jenkins without docker](https://www.baeldung.com/ops/jenkins-enable-https)
-
-**port Configuration**
+### **Port Configuration**
 
 To enable HTTPS on Jenkins Master, set the following environment variable in your Docker Compose file:
 
-> ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
-
+```sh
+ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_home/.ssl/keystore.jks" --httpsKeyStorePassword="5785ch00"
+```
 
 This will allow access through port 8443 while disabling HTTP for security reasons.
 
-#### 2. SSH Connection in Jenkins : 
+---
 
+## **Step 2: SSH Connections in Jenkins**
 
-As I mentionedf before there will be two seperate ssh connection for jenkins in my AdventureTube Project ATM.
+Jenkins in the AdventureTube project requires **two separate SSH connections**:
 
-**1. Controller-Agent Connection**
-This allows the Jenkins controller (master) to securely communicate with the agent over SSH. 
-The controller orchestrates the build and deploy processes, while the agent handles actual execution, 
-like testing and building.
+### **1. Controller-Agent Connection**
 
-In my AdventureTube project ,Jenkins Master will initiate the connection (become a ssh client )
-and agent will receive connection (become a ssh server).
-So private key (jenkins-agent-key) will be added in Credential in jenkins master 
-and public key will be passed as a enviroment value in docker compose file for jenkin-agent
+This allows the Jenkins controller (master) to securely communicate with the agent over SSH. The controller orchestrates the build and deploy processes, while the agent handles actual execution, like testing and building.
 
+- **Jenkins Master:** Initiates the connection (acts as the SSH client).
+- **Jenkins Agent:** Receives the connection (acts as the SSH server).
 
-Step1).Generate an SSH key pair and register for both master and agent  (reference : https://www.jenkins.io/doc/book/using/using-agents/)
+#### **Step 1: Generate SSH Key Pair**
 
-Name the private key jenkins_agent_key.
-Register the private key in Jenkins Master as a credentialfor controller .
-Set the public key as an environment variable in your Docker Compose file for agent .
-During agent container creation, this public key will be added to the known_hosts file.
+1. Generate an SSH key pair and register it for both master and agent (reference: [Jenkins SSH Agent Setup](https://www.jenkins.io/doc/book/using/using-agents/)).
+   ```sh
+   ssh-keygen -t ed25519 -C "jenkins-agent"
+   ```
+2. Name the private key `jenkins_agent_key`.
+3. Register the private key in Jenkins Master as a credential.
+4. Set the public key as an environment variable in your Docker Compose file for the agent.
+5. During agent container creation, this public key will be added to the `known_hosts` file.
 
-Note: Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
+   **Note:** Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
 
+#### **Step 2: Configure Jenkins Agent Node**
 
+- **Remote root directory:** `/home/jenkins/agent`
+- **Launch method:** `Launch agents via SSH`
+- **Host:** `localhost` or `IP address`
+- **Port:** `2222`
+- **Credentials:** `jenkins-agent-credential`
+- **Host Key Verification Strategy:** Choose one of the following:
+  1. **None verifying verification strategy** (not secure).
+  2. **Known host verification strategy** (generate `known_hosts` on Jenkins Master using `ssh-keyscan` and change file permission to jenkins after creating the file. This way Jenkins master can securely connect to the agent without manual prompts or password authentication).
+  3. **Manually trusted key verification strategy** (recommended for security).
 
-Step2) New node setting
-<p align="center"> <img src="/images/node-setting.png"></p>
-* root directory : /home/jenkins/agent
-* Launch method : Launch agents via SSH and  this will make jenkins master as ssh client and  jenkins agent as ssh server
-             as connection will  initiate from jenkins master and agent will be created.
+    <p align="center"> <img src="/images/Hostkey verification Strategy .jpg"></p>
 
-* Host : localhost or ipaddress
+---
 
-* HostkeyVerification Stratagy 
-option 1) None verifying verification Stratagy  => nothing to do but not secure!!!
-option 2) Known host verification Stratagy => generate known_hosts on jenkins master  using ssh-keyscan will add the the agents's public key 
-![How to add knownHosts file to jenkins-master](images/key-scan-image.png)
-change file permission to jenkins after create file,This way Jenkins master can securely connect to the agent without manual prompts or password authentication.
-option 3) Manually trusted key Verification Stratagy 
+### **2. Git Repository SSH Connections**
 
-<p align="center"> <img src="/images/Hostkey verification Strategy .jpg"></p>
+The agent or master needs a second SSH connection to access the Git repository. When code is pushed to Git, Jenkins receives a notification (via a webhook), and the agent initiates the process of pulling the code from the repository for testing, building, and deployment.
 
+Use the `id_ed25519` private key for communication with GitHub. Ensure this key is available on both Jenkins Agent and Master. Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
 
-**2. Git Repository Connection** 
-The agent or master needs a second SSH connection to access  Git repository.
-When code is pushed to Git, Jenkins receives a notification (via a webhook), 
-and the agent initiates the process of pulling the code from the repository for testing, building, and deployment.
+---
 
-Use the id_ed25519 private key for communication with GitHub.
-Make sure this key is available on both Jenkins Agent and Master.
-Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
+## **Docker in Docker Issue on Jenkins Agent**
 
+Jenkins Agent may encounter permission issues when accessing `/var/run/docker.sock`.
+Although the Dockerfile for Jenkins Agent adds the Jenkins user to the Docker group within the agent container, it doesn't affect the Docker group on the host machine successfully.
 
+This happens because the existing Docker group in the **jenkins-agent** base image may have a different **group ID** than the Docker group on the host machine. To resolve this, the Dockerfile must check for the existing Docker user, delete it, and create a new one with the same **Docker group ID** as the host machine.
 
+To resolve this, follow these steps:
 
+1. Edit the Docker service file:
+   ```sh
+   sudo nano /usr/lib/systemd/system/docker.service
+   ```
+2. Append the following lines to the bottom of the **Service** section:
+   ```sh
+   SupplementaryGroups=docker
+   ExecStartPost=/bin/chmod 666 /var/run/docker.sock
+   ```
+3. Restart the Docker service:
+   ```sh
+   sudo service docker restart
+   ```
 
-SSH connection between master / agent /github 
+**⚠️ Important:** Changing permissions to `666` for `/var/run/docker.sock` is **not recommended** for security reasons. The provided solution is a safer alternative to grant the necessary permissions.
 
+By following these steps, you should be able to set up Jenkins with Docker Compose and resolve common **SSH and Docker-related issues**.
 
+---
 
+## **Conclusion**
 
+The **AdventureTube microservices backend** is a **scalable, modular, and highly automated** system using **Jenkins, Docker, and Spring Cloud**. By leveraging an optimized **CI/CD pipeline**, the deployment process is **fast, reliable, and secure**.
 
-1) Docker in Docker Issue on Jenkins Agent
-
-Jenkins Agent may encounter permission issues when accessing /var/run/docker.sock.
-Although the Dockerfile for Jenkins Agent adds the Jenkins user to the Docker group within the agent container, 
-it doesn't affect the Docker group on the host machine successfully .
-beacuse There is existing docker group in jenkins-agent basic image that  potentially can be different group id with 
-docker group id in host machine. so in the docker file it is require to check the exsiting docker user and delete first 
-to create the new one with same docker id in the host machine !!!!. and it took me couple of days to find since 
-the error message was not clear and there is no other reference that I can found that mention this docker group id matching t
-to avoid permission issue . OMG !!!!
-
-
-
-To resolve this, you can follow these steps:
-(Fith solution in https://phoenixnap.com/kb/docker-permission-denied) 
-Edit the Docker service file by running: 
-  sudo nano /usr/lib/systemd/system/docker.service
-  Append the following lines to the bottom of the Service section:
-
-   >SupplementaryGroups=docker
-    ExecStartPost=/bin/chmod 666 /var/run/docker.sock
-
-Restart the Docker service: sudo service docker restart
-Note: Changing permissions to 666 for /var/run/docker.sock is not recommended for security reasons, so the provided solution is a safer alternative.
-
-By following these instructions, you should be able to set up Jenkins with Docker Compose and resolve common SSH and Docker-related issues.
-
-## ADD YOUTUBE VIDEO!!!!!
-
-
-
+🚀 **AdventureTube Deployment - Fully Automated & Scalable!**
 
