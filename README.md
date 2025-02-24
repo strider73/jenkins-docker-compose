@@ -2,7 +2,7 @@
 
 ## Overview
 
-AdventureTube utilizes a backend system comprised of microservices. Each microservice is independently built as a Docker container and managed using Docker Compose. While this architecture ensures modularity and streamlined updates, the build and test processes can be repetitive and time-consuming. To automate and optimize these processes, Jenkins has been integrated to establish a **Continuous Integration and Continuous Deployment (CI/CD) pipeline**, ensuring efficiency, consistency, and scalability in the development workflow.
+[AdventureTube](https://adventuretube.net/) utilizes a [backend system](https://github.com/strider73/adventuretube-microservice) comprised of microservices. Each microservice is independently built as a Docker container and managed using Docker Compose. While this architecture ensures modularity and streamlined updates, the build and test processes can be repetitive and time-consuming. To automate and optimize these processes, Jenkins has been integrated to establish a **Continuous Integration and Continuous Deployment (CI/CD) pipeline**, ensuring efficiency, consistency, and scalability in the development workflow.
 
 The AdventureTube project follows a structured CI/CD pipeline to automate building, testing, and deploying microservices. The pipeline is designed to work with two Raspberry Pi devices:
 
@@ -41,7 +41,7 @@ In Jenkins, when configuring SSL, you typically need to handle two main componen
 
 ### **SSL Certification Configuration**
 
-- **Using an [Nginx proxy server](https://github.com/strider73/nginx) as a reverse proxy** (Personaly I do way more prefer ).
+- **Using an [Nginx proxy server](https://github.com/strider73/nginx) as a reverse proxy** (Personaly I do recommend this way it's notonly good to create certification but also easy to manage check my git hub for easy intall).
 - **Self-signed certificates to the Java Keystore.**
 
 ### **Port Configuration**
@@ -74,9 +74,9 @@ This allows the Jenkins controller (master) to securely communicate with the age
    ssh-keygen -t ed25519 -C "jenkins-agent"
    ```
 2. Name the private key `jenkins_agent_key`.
-3. Register the private key in Jenkins Master as a credential.
-4. Set the public key as an environment variable in your Docker Compose file for the agent.
-5. During agent container creation, this public key will be added to the `known_hosts` file.
+3. <span style="color:red">Register the private key in Jenkins Master as a credential.</span>
+4. <span style="color:red">Set the public key as an environment variable in your Docker Compose file for the agent.</span>
+5. During agent container creation, <span style="color:red">this public key will be added to the `known_hosts` file</span>.
 
    **Note:** Ensure the private key has an extra carriage return at the end when uploaded to GitHub.
 
@@ -100,7 +100,7 @@ This allows the Jenkins controller (master) to securely communicate with the age
 
 The agent or master needs a second SSH connection to access the Git repository. When code is pushed to Git, Jenkins receives a notification (via a webhook), and the agent initiates the process of pulling the code from the repository for testing, building, and deployment.
 
-Use the `id_ed25519` private key for communication with GitHub. Ensure this key is available on both Jenkins Agent and Master. Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
+Use the `id_ed25519` private key for communication with GitHub. <span style="color:red">Ensure this key is available on both Jenkins Agent and Master</span>. Be cautious about any missing carriage returns in the private key content to prevent authorization errors.
 
 ---
 
@@ -109,7 +109,7 @@ Use the `id_ed25519` private key for communication with GitHub. Ensure this key 
 Jenkins Agent may encounter permission issues when accessing `/var/run/docker.sock`.
 Although the Dockerfile for Jenkins Agent adds the Jenkins user to the Docker group within the agent container, it doesn't affect the Docker group on the host machine successfully.
 
-This happens because the existing Docker group in the **jenkins-agent** base image may have a different **group ID** than the Docker group on the host machine. To resolve this, the Dockerfile must check for the existing Docker user, delete it, and create a new one with the same **Docker group ID** as the host machine.
+<span style="color:red">This happens because the existing Docker group in the **jenkins-agent** base image may have a different **group ID** than the Docker group on the host machine</span>. To resolve this, the Dockerfile must check for the existing Docker user, delete it, and create a new one with the same **Docker group ID** as the host machine.
 
 To resolve this, follow these steps:
 
@@ -133,9 +133,6 @@ By following these steps, you should be able to set up Jenkins with Docker Compo
 
 ---
 
-## **Conclusion**
-
-The **AdventureTube microservices backend** is a **scalable, modular, and highly automated** system using **Jenkins, Docker, and Spring Cloud**. By leveraging an optimized **CI/CD pipeline**, the deployment process is **fast, reliable, and secure**.
 
 🚀 **AdventureTube Deployment - Fully Automated & Scalable!**
 
