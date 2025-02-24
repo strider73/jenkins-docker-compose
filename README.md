@@ -41,7 +41,7 @@ In Jenkins, when configuring SSL, you typically need to handle two main componen
 
 ### **SSL Certification Configuration**
 
-- **Using an Nginx proxy server as a reverse proxy** (this is the setup used in AdventureTube).
+- **Using an [Nginx proxy server](https://github.com/strider73/nginx) as a reverse proxy** (Personaly I do way more prefer ).
 - **Self-signed certificates to the Java Keystore.**
 
 ### **Port Configuration**
