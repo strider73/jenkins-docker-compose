@@ -32,7 +32,7 @@ Jenkins agents typically authenticate using SSH keys under the **"Launch agent b
 
 This is the **opposite** of the standard Jenkins setup where the agent connects to the master.
 
-During the configuration of **"Launch agents via SSH"**, you must understand the **Host Key Verification Strategy**. This setting applies to connections between the master and agent.
+During the configuration of **"Launch agents via SSH"**, you must understand the **Host Key Verification Strategy**. This setting applies to connections between the master and agent.(detail in below : Host Key Verification Strategy)
 
 
 ## **Step 1: SSL Configuration**
