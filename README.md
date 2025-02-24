@@ -7,7 +7,7 @@ AdventureTube utilizes a backend system comprised of microservices. Each microse
 The AdventureTube project follows a structured CI/CD pipeline to automate building, testing, and deploying microservices. The pipeline is designed to work with two Raspberry Pi devices:
 
 - **Pi1**: Runs Jenkins Master, PostgreSQL, MongoDB, and Kafka.
-- **Pi2**: Runs microservices and Spring Cloud components (Eureka, Config Server, Gateway).
+- **Pi2**: Runs Jenkins Agent , microservices and Spring Cloud components (Eureka, Config Server, Gateway).
 
 ---
 
@@ -27,14 +27,13 @@ Jenkins agents typically authenticate using SSH keys under the **"Launch agent b
 
 ### **Key Differences in SSH Setup**
 
-- **Jenkins Master:** Holds the **private key**.
-- **Jenkins Agent:** Holds the **public key**.
+- **Jenkins Master:** Holds the **private key**. => SSH Server
+- **Jenkins Agent:** Holds the **public key**. => SSH Client 
 
 This is the **opposite** of the standard Jenkins setup where the agent connects to the master.
 
 During the configuration of **"Launch agents via SSH"**, you must understand the **Host Key Verification Strategy**. This setting applies to connections between the master and agent.
 
----
 
 ## **Step 1: SSL Configuration**
 
@@ -55,7 +54,7 @@ ENV JENKINS_OPTS --httpPort=-1 --httpsPort=8443 --httpsKeyStore="/var/jenkins_ho
 
 This will allow access through port 8443 while disabling HTTP for security reasons.
 
----
+
 
 ## **Step 2: SSH Connections in Jenkins**
 
